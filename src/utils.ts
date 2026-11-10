@@ -137,8 +137,13 @@ export async function newNote(
     extraLocationData?: ExtraLocationData,
 ): Promise<[TFile, number]> {
     let templateContent = '';
-    if (templatePath && templatePath.length > 0)
-        templateContent = await app.vault.adapter.read(templatePath);
+    if (templatePath && templatePath.length > 0) {
+        try {
+            templateContent = await app.vault.adapter.read(templatePath);
+        } catch (e) {
+            new Notice(`Template file not found: ${templatePath}`);
+        }
+    }
 
     templateContent = formatWithTemplates(
         templateContent,
